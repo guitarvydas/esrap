@@ -358,10 +358,18 @@ rule.
                  (break "rule ~S" symbol))
                (format *trace-output* "~&~V@T~D: ~S ~S[~A]?~%"
                        *trace-level* (1+ *trace-level*) symbol position
-                       (substitute #\¶ #\Newline
+                       #-lispworks(substitute #\¶ #\Newline
                                    (subseq text
                                            (max 0 (- position 2))
-                                           (min (length text) (+ position 3)))))
+                                           (min (length text) (+ position 3))))
+                       #+lispworks(substitute #\� #\Newline
+                                   (subseq text
+                                           (max 0 (- position 2))
+                                           (min (length text) (+ position 3))))
+                                   (subseq text
+                                           (max 0 (- position 2))
+                                           (min (length text) (+ position 3)))
+                       )
                (finish-output *trace-output*)
                (let* ((*trace-level* (1+ *trace-level*))
                       (result (funcall fun text position end)))
